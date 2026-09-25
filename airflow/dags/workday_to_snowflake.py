@@ -27,22 +27,39 @@ ENDPOINTS = ["workers", "positions", "organizations", "compensation", "time_off"
 DBT_ENV = {
     "SNOWFLAKE_ACCOUNT": os.environ.get("SNOWFLAKE_ACCOUNT", ""),
     "SNOWFLAKE_USER": os.environ.get("SNOWFLAKE_USER", ""),
-    "SNOWFLAKE_PASSWORD": os.environ.get("SNOWFLAKE_PASSWORD", ""),
     "SNOWFLAKE_ROLE": os.environ.get("SNOWFLAKE_ROLE", ""),
     "SNOWFLAKE_WAREHOUSE": os.environ.get("SNOWFLAKE_WAREHOUSE", ""),
     "SNOWFLAKE_DATABASE": os.environ.get("SNOWFLAKE_DATABASE", ""),
+    "SNOWFLAKE_PRIVATE_KEY_PATH": os.environ.get("SNOWFLAKE_PRIVATE_KEY_PATH", "/opt/airflow/snowflake_rsa_key.p8"),
 }
 
 
 def get_snowflake_conn():
     import snowflake.connector
+    from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.backends import default_backend
+
+    key_path = os.environ.get("SNOWFLAKE_PRIVATE_KEY_PATH", "/opt/airflow/snowflake_rsa_key.p8")
+    with open(key_path, "rb") as key_file:
+        private_key = serialization.load_pem_private_key(
+            key_file.read(),
+            password=None,
+            backend=default_backend(),
+        )
+
+    private_key_bytes = private_key.private_bytes(
+        encoding=serialization.Encoding.DER,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption(),
+    )
+
     return snowflake.connector.connect(
         account=os.environ["SNOWFLAKE_ACCOUNT"],
         user=os.environ["SNOWFLAKE_USER"],
-        password=os.environ["SNOWFLAKE_PASSWORD"],
-        role=os.environ["SNOWFLAKE_ROLE"],
-        warehouse=os.environ["SNOWFLAKE_WAREHOUSE"],
-        database=os.environ["SNOWFLAKE_DATABASE"],
+        private_key=private_key_bytes,
+        role=os.environ.get("SNOWFLAKE_ROLE", "ELT_ROLE"),
+        warehouse=os.environ.get("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH"),
+        database=os.environ.get("SNOWFLAKE_DATABASE", "WORKDAY_DB"),
     )
 
 

@@ -4,7 +4,6 @@ config-version: 2
 profile: 'snowflake_workday'
 
 model-paths: ["models"]
-test-paths: ["models"]
 target-path: "target"
 clean-targets: ["target", "dbt_packages"]
 

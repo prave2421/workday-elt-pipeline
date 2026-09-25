@@ -17,12 +17,11 @@ deduped AS (
 )
 
 SELECT
-    MD5(org_id) AS org_key,
-    org_id,
-    org_name,
-    parent_org_id,
-    org_type,
-    -- Self-join for parent name
-    parent.org_name AS parent_org_name
-FROM deduped
-LEFT JOIN deduped parent ON deduped.parent_org_id = parent.org_id
+    MD5(d.org_id) AS org_key,
+    d.org_id,
+    d.org_name,
+    d.parent_org_id,
+    d.org_type,
+    p.org_name AS parent_org_name
+FROM deduped d
+LEFT JOIN deduped p ON d.parent_org_id = p.org_id

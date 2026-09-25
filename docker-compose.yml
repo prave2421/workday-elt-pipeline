@@ -10,6 +10,7 @@ x-airflow-common: &airflow-common
     - ./dbt:/opt/airflow/dbt
     - ./data/landing:/opt/airflow/data/landing
     - ./logs:/opt/airflow/logs
+    - ./snowflake_rsa_key.p8:/opt/airflow/snowflake_rsa_key.p8:ro
   depends_on:
     postgres:
       condition: service_healthy

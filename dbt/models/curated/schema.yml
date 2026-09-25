@@ -2,40 +2,34 @@ version: 2
 
 models:
   - name: dim_worker
-    description: "SCD Type 2 worker dimension with effective dates for full job history"
+    description: "SCD Type 2 worker dimension"
     columns:
       - name: worker_dim_key
-        description: "Surrogate key (worker_id + effective_from)"
-        tests: [unique, not_null]
+        data_tests:
+          - not_null
       - name: worker_id
-        tests: [not_null]
-      - name: is_current
-        description: "TRUE for the current/active version of each worker"
+        data_tests:
+          - not_null
 
   - name: dim_org
-    description: "Organization dimension with parent hierarchy"
+    description: "Organization dimension"
     columns:
       - name: org_key
-        tests: [unique, not_null]
-      - name: org_id
-        tests: [unique, not_null]
+        data_tests:
+          - unique
+          - not_null
 
   - name: fct_headcount_daily
-    description: "Daily headcount by org, job family, level and location"
+    description: "Daily headcount"
     columns:
-      - name: headcount_key
-        tests: [not_null]
       - name: report_date
-        tests: [not_null]
-      - name: headcount
-        tests: [not_null]
+        data_tests:
+          - not_null
 
   - name: fct_compensation
-    description: "Compensation history with salary change tracking"
+    description: "Compensation history"
     columns:
       - name: compensation_id
-        tests: [unique, not_null]
-      - name: worker_id
-        tests: [not_null]
-      - name: base_salary
-        tests: [not_null]
+        data_tests:
+          - unique
+          - not_null

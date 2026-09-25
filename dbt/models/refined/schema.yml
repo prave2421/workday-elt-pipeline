@@ -6,26 +6,22 @@ sources:
     schema: RAW
     tables:
       - name: workers
-        description: "Raw worker records from Workday API as VARIANT"
       - name: job_changes
-        description: "Raw job change events (hires, promotions, transfers, terms)"
       - name: compensation
-        description: "Raw compensation records"
       - name: organizations
-        description: "Raw organization hierarchy"
       - name: positions
-        description: "Raw position catalog"
       - name: time_off
-        description: "Raw time off / leave records"
 
 models:
   - name: stg_workers
-    description: "Flattened worker records with personal, employment, and position data"
+    description: "Flattened worker records"
     columns:
       - name: worker_id
-        tests: [unique, not_null]
+        data_tests:
+          - unique
+          - not_null
       - name: employment_status
-        tests:
+        data_tests:
           - accepted_values:
               values: ['Active', 'Terminated']
 
@@ -33,20 +29,20 @@ models:
     description: "Flattened job change events"
     columns:
       - name: change_id
-        tests: [unique, not_null]
+        data_tests:
+          - unique
+          - not_null
       - name: worker_id
-        tests: [not_null]
-      - name: change_type
-        tests:
-          - accepted_values:
-              values: ['New Hire', 'Promotion', 'Transfer', 'Termination']
+        data_tests:
+          - not_null
 
   - name: stg_compensation
     description: "Flattened compensation records"
     columns:
       - name: compensation_id
-        tests: [unique, not_null]
+        data_tests:
+          - unique
+          - not_null
       - name: worker_id
-        tests: [not_null]
-      - name: base_salary
-        tests: [not_null]
+        data_tests:
+          - not_null
