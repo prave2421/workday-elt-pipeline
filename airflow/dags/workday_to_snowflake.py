@@ -180,19 +180,19 @@ with DAG(
     dbt_refined = BashOperator(
         task_id="dbt_refined",
         bash_command="cd /opt/airflow/dbt && dbt run --select refined --profiles-dir .",
-        env=DBT_ENV,
+        env={**os.environ, **DBT_ENV},
     )
 
     dbt_curated = BashOperator(
         task_id="dbt_curated",
         bash_command="cd /opt/airflow/dbt && dbt run --select curated --profiles-dir .",
-        env=DBT_ENV,
+        env={**os.environ, **DBT_ENV},
     )
 
     dbt_test = BashOperator(
         task_id="dbt_test",
         bash_command="cd /opt/airflow/dbt && dbt test --profiles-dir .",
-        env=DBT_ENV,
+        env={**os.environ, **DBT_ENV},
     )
 
     simulate >> extract_tasks >> load_raw >> dbt_refined >> dbt_curated >> dbt_test
