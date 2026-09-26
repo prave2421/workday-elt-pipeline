@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 620" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#475569"/>
+    </marker>
+    <linearGradient id="dockerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a5f;stop-opacity:0.08"/>
+      <stop offset="100%" style="stop-color:#1e3a5f;stop-opacity:0.03"/>
+    </linearGradient>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="108%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1100" height="620" fill="#f8fafc" rx="12"/>
+
+  <!-- Title -->
+  <text x="550" y="35" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">Workday ELT Pipeline — Architecture</text>
+  <text x="550" y="55" text-anchor="middle" font-size="12" fill="#64748b">Mock API → Airflow → Snowflake → dbt</text>
+
+  <!-- Docker boundary -->
+  <rect x="20" y="70" width="740" height="530" rx="12" fill="url(#dockerGrad)" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="8 4"/>
+  <text x="40" y="92" font-size="12" font-weight="600" fill="#2563eb">🐳  Docker Compose</text>
+
+  <!-- Mock Workday API -->
+  <rect x="45" y="110" width="220" height="200" rx="10" fill="#fff" stroke="#8b5cf6" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="45" y="110" width="220" height="32" rx="10" fill="#8b5cf6"/>
+  <rect x="45" y="130" width="220" height="12" fill="#8b5cf6"/>
+  <text x="155" y="131" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">Mock Workday API</text>
+  <text x="155" y="152" text-anchor="middle" font-size="10" fill="#a78bfa">FastAPI + Faker  :8000</text>
+
+  <text x="65" y="175" font-size="11" fill="#374151">GET /workers</text>
+  <text x="65" y="192" font-size="11" fill="#374151">GET /positions</text>
+  <text x="65" y="209" font-size="11" fill="#374151">GET /organizations</text>
+  <text x="65" y="226" font-size="11" fill="#374151">GET /compensation</text>
+  <text x="65" y="243" font-size="11" fill="#374151">GET /time_off</text>
+  <text x="65" y="260" font-size="11" fill="#374151">GET /job_changes</text>
+  <text x="65" y="283" font-size="11" font-weight="600" fill="#7c3aed">POST /simulate</text>
+  <text x="65" y="298" font-size="9" fill="#6b7280">hires, terms, promos, transfers</text>
+
+  <!-- Arrow API → Airflow -->
+  <line x1="265" y1="210" x2="315" y2="210" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Airflow -->
+  <rect x="320" y="110" width="420" height="310" rx="10" fill="#fff" stroke="#059669" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="320" y="110" width="420" height="32" rx="10" fill="#059669"/>
+  <rect x="320" y="130" width="420" height="12" fill="#059669"/>
+  <text x="530" y="131" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">Apache Airflow</text>
+  <text x="530" y="152" text-anchor="middle" font-size="10" fill="#6ee7b7">Orchestrator  :8080  (admin/admin)</text>
+
+  <!-- DAG Tasks -->
+  <rect x="345" y="165" width="160" height="28" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+  <text x="425" y="184" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">① simulate_changes</text>
+
+  <rect x="345" y="200" width="160" height="28" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+  <text x="425" y="219" text-anchor="middle" font-size="10" font-weight="600" fill="#1e40af">② extract (6 endpoints)</text>
+
+  <rect x="345" y="235" width="160" height="28" rx="6" fill="#fce7f3" stroke="#ec4899" stroke-width="1"/>
+  <text x="425" y="254" text-anchor="middle" font-size="10" font-weight="600" fill="#9d174d">③ load_to_snowflake_raw</text>
+  <text x="510" y="252" font-size="8" fill="#6b7280">PUT + COPY INTO</text>
+
+  <!-- dbt section inside Airflow -->
+  <rect x="340" y="275" width="385" height="130" rx="8" fill="#fafafa" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 2"/>
+  <text x="360" y="293" font-size="11" font-weight="600" fill="#ea580c">dbt (inside Airflow container)</text>
+
+  <rect x="355" y="300" width="165" height="28" rx="6" fill="#ffedd5" stroke="#ea580c" stroke-width="1"/>
+  <text x="437" y="319" text-anchor="middle" font-size="10" font-weight="600" fill="#9a3412">④ dbt_refined</text>
+
+  <text x="358" y="342" font-size="9" fill="#6b7280">stg_workers.sql</text>
+  <text x="358" y="354" font-size="9" fill="#6b7280">stg_job_changes.sql</text>
+  <text x="358" y="366" font-size="9" fill="#6b7280">stg_compensation.sql</text>
+
+  <rect x="545" y="300" width="165" height="28" rx="6" fill="#fef2f2" stroke="#dc2626" stroke-width="1"/>
+  <text x="627" y="319" text-anchor="middle" font-size="10" font-weight="600" fill="#991b1b">⑤ dbt_curated</text>
+
+  <text x="548" y="342" font-size="9" fill="#6b7280">dim_worker.sql (SCD2)</text>
+  <text x="548" y="354" font-size="9" fill="#6b7280">dim_org.sql</text>
+  <text x="548" y="366" font-size="9" fill="#6b7280">fct_headcount_daily.sql</text>
+  <text x="548" y="378" font-size="9" fill="#6b7280">fct_compensation.sql</text>
+
+  <!-- Arrow refined → curated -->
+  <line x1="520" y1="314" x2="542" y2="314" stroke="#475569" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- dbt test -->
+  <rect x="355" y="385" width="355" height="24" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1"/>
+  <text x="532" y="401" text-anchor="middle" font-size="10" font-weight="600" fill="#166534">⑥ dbt_test  (unique, not_null, accepted_values)</text>
+
+  <!-- Postgres -->
+  <rect x="45" y="340" width="220" height="70" rx="10" fill="#fff" stroke="#64748b" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="45" y="340" width="220" height="28" rx="10" fill="#64748b"/>
+  <rect x="45" y="356" width="220" height="12" fill="#64748b"/>
+  <text x="155" y="359" text-anchor="middle" font-size="12" font-weight="600" fill="#fff">PostgreSQL</text>
+  <text x="155" y="383" text-anchor="middle" font-size="10" fill="#6b7280">Airflow metadata  :5432</text>
+  <text x="155" y="400" text-anchor="middle" font-size="9" fill="#94a3b8">DAG runs, task history, state</text>
+
+  <!-- Landing Volume -->
+  <rect x="45" y="440" width="220" height="55" rx="10" fill="#fff" stroke="#64748b" stroke-width="1" filter="url(#shadow)"/>
+  <text x="155" y="462" text-anchor="middle" font-size="11" font-weight="600" fill="#374151">📁 data/landing/</text>
+  <text x="155" y="480" text-anchor="middle" font-size="9" fill="#6b7280">workers/load_date=YYYY-MM-DD/*.json</text>
+
+  <!-- Arrow to landing -->
+  <line x1="345" y1="219" x2="265" y2="460" stroke="#475569" stroke-width="1" stroke-dasharray="4 2"/>
+
+  <!-- ═══════════════ SNOWFLAKE (outside Docker) ═══════════════ -->
+  <rect x="790" y="70" width="290" height="530" rx="12" fill="#fff" stroke="#29b5e8" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="790" y="70" width="290" height="36" rx="12" fill="#29b5e8"/>
+  <rect x="790" y="94" width="290" height="12" fill="#29b5e8"/>
+  <text x="935" y="94" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">❄️  Snowflake</text>
+  <text x="935" y="118" text-anchor="middle" font-size="10" fill="#0ea5e9">WORKDAY_DB  |  COMPUTE_WH</text>
+
+  <!-- RAW -->
+  <rect x="810" y="135" width="250" height="135" rx="8" fill="#fef9c3" stroke="#eab308" stroke-width="1"/>
+  <text x="935" y="155" text-anchor="middle" font-size="12" font-weight="700" fill="#854d0e">RAW</text>
+  <text x="935" y="170" text-anchor="middle" font-size="9" fill="#a16207">VARIANT + _loaded_at + _file_name</text>
+
+  <text x="825" y="190" font-size="10" fill="#374151">📦 WORKERS</text>
+  <text x="825" y="205" font-size="10" fill="#374151">📦 JOB_CHANGES</text>
+  <text x="825" y="220" font-size="10" fill="#374151">📦 COMPENSATION</text>
+  <text x="825" y="235" font-size="10" fill="#374151">📦 ORGANIZATIONS</text>
+  <text x="825" y="250" font-size="10" fill="#374151">📦 POSITIONS</text>
+  <text x="825" y="265" font-size="10" fill="#374151">📦 TIME_OFF</text>
+
+  <!-- Arrow load → RAW -->
+  <line x1="740" y1="254" x2="808" y2="200" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="768" y="218" font-size="8" fill="#475569" transform="rotate(-15,768,218)">PUT + COPY</text>
+
+  <!-- RAW_REFINED -->
+  <rect x="810" y="285" width="250" height="105" rx="8" fill="#ffedd5" stroke="#ea580c" stroke-width="1"/>
+  <text x="935" y="305" text-anchor="middle" font-size="12" font-weight="700" fill="#9a3412">RAW_REFINED</text>
+  <text x="935" y="318" text-anchor="middle" font-size="9" fill="#c2410c">Flattened, typed, deduped, incremental</text>
+
+  <text x="825" y="338" font-size="10" fill="#374151">📋 STG_WORKERS</text>
+  <text x="825" y="355" font-size="10" fill="#374151">📋 STG_JOB_CHANGES</text>
+  <text x="825" y="372" font-size="10" fill="#374151">📋 STG_COMPENSATION</text>
+
+  <!-- Arrow RAW → REFINED -->
+  <line x1="935" y1="270" x2="935" y2="283" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- RAW_CURATED -->
+  <rect x="810" y="405" width="250" height="120" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1"/>
+  <text x="935" y="425" text-anchor="middle" font-size="12" font-weight="700" fill="#991b1b">RAW_CURATED</text>
+  <text x="935" y="438" text-anchor="middle" font-size="9" fill="#dc2626">Business-ready marts</text>
+
+  <text x="825" y="458" font-size="10" font-weight="600" fill="#374151">⭐ DIM_WORKER (SCD2)</text>
+  <text x="825" y="475" font-size="10" fill="#374151">🏢 DIM_ORG</text>
+  <text x="825" y="492" font-size="10" fill="#374151">📊 FCT_HEADCOUNT_DAILY</text>
+  <text x="825" y="509" font-size="10" fill="#374151">💰 FCT_COMPENSATION</text>
+
+  <!-- Arrow REFINED → CURATED -->
+  <line x1="935" y1="390" x2="935" y2="403" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row counts -->
+  <rect x="810" y="540" width="250" height="45" rx="8" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1"/>
+  <text x="935" y="558" text-anchor="middle" font-size="10" font-weight="600" fill="#0369a1">Live Data</text>
+  <text x="935" y="575" text-anchor="middle" font-size="9" fill="#0c4a6e">55 workers | 59 changes | 27K headcount rows</text>
+
+  <!-- dbt arrows to Snowflake -->
+  <line x1="740" y1="340" x2="808" y2="340" stroke="#ea580c" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="6 3"/>
+  <line x1="740" y1="370" x2="808" y2="460" stroke="#dc2626" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="6 3"/>
+</svg>

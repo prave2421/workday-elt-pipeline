@@ -27,6 +27,7 @@ A fully self-contained ELT pipeline simulating a real Workday integration. A Fas
 └──────────────────────────────────────────────────────────┘  fct_turnover     │       │
                                                             └──────────────────┘       │
 ```
+![Architecture](docs/architecture.svg)
 
 ## What Makes This Interesting
 
